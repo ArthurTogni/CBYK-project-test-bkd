@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Service
 public class AgendarTransferenciaService {
@@ -16,6 +17,10 @@ public class AgendarTransferenciaService {
 
     public AgendarTransferencia getById(Long id){
         return agendarTransferenciaRepository.findById(id).orElse(new AgendarTransferencia());
+    }
+
+    public List<AgendarTransferencia> getAll() {
+        return agendarTransferenciaRepository.findAll();
     }
 
     public AgendarTransferencia cadastrarAgendamento(AgendarTransferenciaDTO agendarTransferenciaDTO, double taxa, double valorComTaxa){
