@@ -18,7 +18,7 @@ public class AgendarTransferenciaService {
         return agendarTransferenciaRepository.findById(id).orElse(new AgendarTransferencia());
     }
 
-    public AgendarTransferencia cadastrarAgendamento(AgendarTransferenciaDTO agendarTransferenciaDTO, double taxa, double valorTransferencia, double valorComTaxa){
+    public AgendarTransferencia cadastrarAgendamento(AgendarTransferenciaDTO agendarTransferenciaDTO, double taxa, double valorComTaxa){
 
         AgendarTransferencia agendarTransferencia  = new AgendarTransferencia();
 
@@ -27,7 +27,7 @@ public class AgendarTransferenciaService {
         agendarTransferencia.setDataTransferencia(agendarTransferenciaDTO.getDataTransferencia());
         agendarTransferencia.setDataAgendamento(agendarTransferenciaDTO.getDataAgendamento());
         agendarTransferencia.setTaxa(taxa);
-        agendarTransferencia.setValorTransferencia(valorTransferencia);
+        agendarTransferencia.setValorTransferencia(agendarTransferenciaDTO.getValorTransferencia());
         agendarTransferencia.setValorComTaxa(valorComTaxa);
 
         agendarTransferenciaRepository.save(agendarTransferencia);

@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.AgendarTransferencia;
 import com.example.demo.model.dto.AgendarTransferenciaDTO;
 import com.example.demo.model.dto.AgendarTransferenciaReturnDTO;
+import com.example.demo.model.dto.TaxaValor;
 import com.example.demo.repository.service.AgendarTransferenciaService;
+import com.example.demo.repository.service.CalcularValorTaxa;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -21,6 +24,9 @@ public class AgendarTransferenciaController {
     @Autowired
     private AgendarTransferenciaService agendarTransferenciaService;
 
+    @Autowired
+    private CalcularValorTaxa calcularValorTaxa;
+
     @ApiOperation(value = "Retorna o beneficiario pelo id")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Retorna o pedido"),
@@ -28,9 +34,30 @@ public class AgendarTransferenciaController {
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),
     })
     @RequestMapping(method = RequestMethod.POST, produces="application/json", consumes="application/json")
-    public AgendarTransferenciaReturnDTO agendarTransferencia(@RequestBody AgendarTransferenciaDTO agendarTransferenciaDTO){
+    public AgendarTransferenciaReturnDTO agendarTransferencia(@RequestBody AgendarTransferenciaDTO agendarTransferenciaDTO) throws Exception {
+        try {
 
-        return null;
+            TaxaValor txValor = new TaxaValor();
+            txValor = calcularValorTaxa.calcularValor(agendarTransferenciaDTO);
+            AgendarTransferenciaReturnDTO agendarTransferenciaReturnDTO = new AgendarTransferenciaReturnDTO();
+
+            AgendarTransferencia agendarTransferencia = new AgendarTransferencia();
+            agendarTransferencia = agendarTransferenciaService.cadastrarAgendamento(agendarTransferenciaDTO, txValor.getTaxa(), txValor.getValorTaxa());
+
+            agendarTransferenciaReturnDTO.setDataTransferencia(agendarTransferencia.getDataTransferencia());
+            agendarTransferenciaReturnDTO.setValorTransferencia(agendarTransferencia.getValorTransferencia());
+            agendarTransferenciaReturnDTO.setTaxa(txValor.getTaxa());
+            agendarTransferenciaReturnDTO.setContaDestino(agendarTransferencia.getContaDestino());
+            agendarTransferenciaReturnDTO.setContaOrigem(agendarTransferencia.getContaOrigem());
+            agendarTransferenciaReturnDTO.setValorComTaxa(agendarTransferencia.getValorComTaxa());
+            agendarTransferenciaReturnDTO.setDataAgendamento(agendarTransferencia.getDataAgendamento());
+
+            return agendarTransferenciaReturnDTO;
+
+        }catch (Exception e){
+            String message = "Erro na chamada";
+            throw new Exception(message, e);
+        }
     }
 
 }
